@@ -28,7 +28,6 @@ function getPosts() {
             const url = `https://ask.vrchat.com/t/${feed.slug}/${id}`
             feeds.push({id,title,imageUrl,createdAt,excerpt,views,likeCount})
         })
-        //console.log(feeds);
         return feeds;
     })
 }
@@ -56,9 +55,7 @@ async function createRssVRChatDevUpdates() {
         })
     }
     fs.writeFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), feed.xml(), {encoding: 'utf-8'})
-    //console.log(feeds);
 }
-createRssVRChatDevUpdates();
 
 /**
  * @deprecated This is deprecated and should not be used anymore.
@@ -86,5 +83,5 @@ function getPostsByScraper() {
 }
 
 module.exports = {
-    getPosts
+    createRssVRChatDevUpdates
 }
