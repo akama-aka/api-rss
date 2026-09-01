@@ -7,6 +7,7 @@ const server = new fastify({
     logger:true
 });
 setInterval(() => {
+    console.info("Updating Feeds")
     createRssVRChatDevUpdates()
 }, 1000 * 60 * 5)
 

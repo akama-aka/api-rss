@@ -26,7 +26,7 @@ function getPosts() {
             const likeCount = feed.like_count;
             const id = feed.id;
             const url = `https://ask.vrchat.com/t/${feed.slug}/${id}`
-            feeds.push({id,title,imageUrl,createdAt,excerpt,views,likeCount})
+            feeds.push({id,title,imageUrl,createdAt,excerpt,views,likeCount,url})
         })
         return feeds;
     })
@@ -46,6 +46,8 @@ async function createRssVRChatDevUpdates() {
     const feeds = await getPosts();
     let changed = false;
     for(const itemSource of feeds) {
+        if(itemSource.title === "About the Dev Updates category")
+            break;
         feed.item({
             title: itemSource.title,
             description: itemSource.excerpt,
@@ -81,7 +83,6 @@ function getPostsByScraper() {
 
     })
 }
-
 module.exports = {
     createRssVRChatDevUpdates
 }
