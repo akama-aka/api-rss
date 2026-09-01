@@ -1,6 +1,6 @@
 {
   "name": "api-rss",
-  "version": "1.0.0",
+  "version": "1.0.0-DEV",
   "description": "",
   "type": "commonjs",
   "main": "index.js",
@@ -11,7 +11,9 @@
     "axios": "^1.20.0",
     "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
+    "fast-xml-parser": "^5.11.1",
     "fastify": "^5.12.1",
+    "jsdom": "^30.0.1",
     "rss": "^1.2.2",
     "sqlite": "^5.1.1",
     "sqlite3": "^6.0.1"
