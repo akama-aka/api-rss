@@ -1,27 +1,96 @@
+const path = require('node:path');
 const fs = require('node:fs');
 const cheerio = require('cheerio');
 const axios = require('axios');
+const { JSDOM } = require('jsdom');
+const { XMLParser } = require('fast-xml-parser');
 const client = axios.create({
     baseURL: 'https://ask.vrchat.com/c',
     headers: {
-        "User-Agent":"VR Stoat Community Scraper/1.0.0",
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        "User-Agent":"VR Stoat Community Scraper/1.0.0-DEV",
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*\/*;q=0.8'
     }
 })
 
+
 function getPosts() {
-    client.get('/official/31').then(function (response) {
-        console.debug(response.data);
-        const $ = cheerio.load(response.data);
-        const feeds = [];
-        fs.writeFileSync('vrcForum.out.html', response.data, {encoding:'utf-8'})
-        $('body.category-official>section#main.ember-application>div#ember3>div#main-outlet>div.container.list-container.--topic-list>div.row.full-width>div#ember31.contents.ember-view>table.topic-list>tbody.topic-list-body>tr.topic-list-item>td.topic-list-data').each((index, element ) => {
-            const title = $(element).find('a.title')
-            
-            console.log("--- Titles ---")
-            console.log(title);
+    return client.get('/official/dev-updates/32/l/latest.json?filter=default').then(function (response) {
+        const rawFeeds = response.data.topic_list.topics;
+        let feeds = [];
+        rawFeeds.forEach((feed) => {
+            const title = feed.title;
+            const imageUrl = feed.image_url;
+            const createdAt = feed.created_at;
+            const excerpt = feed.excerpt;
+            const views = feed.views;
+            const likeCount = feed.like_count;
+            const id = feed.id;
+            const url = `https://ask.vrchat.com/t/${feed.slug}/${id}`
+            feeds.push({id,title,imageUrl,createdAt,excerpt,views,likeCount})
         })
+        //console.log(feeds);
+        return feeds;
     })
 }
 
-getPosts();
+async function createRssVRChatDevUpdates() {
+    const parser = new XMLParser();
+    const RSS = require('rss');
+    const feed = new RSS({
+        title: "VRChat Developer Updates",
+        feed_url: process.env.SERVER_DOMAIN,
+        site_url: "https://ask.vrchat.com/c/official/dev-updates/",
+        copyright: "VRChat",
+        ttl: 5
+    })
+    const currentFeed = parser.parse(fs.readFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), {encoding: 'utf-8'}));
+    const feeds = await getPosts();
+    let changed = false;
+    for(const itemSource of feeds) {
+        if(currentFeed.rss.channel.item.includes(itemSource.id)) {
+            changed = true;
+            console.log(`Adding new Item ${itemSource.id}`)
+            feed.item({
+                title: itemSource.title,
+                description: itemSource.excerpt,
+                date: itemSource.createdAt,
+                url: itemSource.url,
+                guid: itemSource.id
+            })
+        } else {
+            console.log(`Skipping existing Item ${itemSource.id}`)
+        }
+    }
+    fs.writeFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), feed.xml(), {encoding: 'utf-8'})
+    //console.log(feeds);
+}
+createRssVRChatDevUpdates();
+
+/**
+ * @deprecated This is deprecated and should not be used anymore.
+ */
+function getPostsByScraper() {
+    client.get('/official/31').then(function (response) {
+        //const data = fs.readFileSync(path.join(__dirname,'..','vrcForum.out.html'), {encoding: 'utf-8'})
+        const dom = new JSDOM(response.data);
+        const document = dom.window.document;
+        // Step 1, get the title & url from the List
+        const feeds = [];
+        const articles = document.querySelectorAll('tr.topic-list-item');
+        articles.forEach((article) => {
+            console.debug(article)
+            const title = article.querySelector('tr.topic-list-item td.main-link span.link-top-line a.title')?.textContent.trim();
+            const url = article.querySelector('tr.topic-list-item td.main-link span.link-top-line a')?.href.trim();
+            const category = article.querySelector('tr.topic-list-item td.main-link div.link-bottom-line a.badge-wrapper span.badge-category span.category-name')?.textContent.trim();
+            const categoryColour = article.querySelector('tr.topic-list-item td.main-link div.link-bottom-line a.badge-wrapper span.badge-category-bg')?.style.backgroundColor;
+            feeds.push({title, url});
+        })
+
+        console.log(feeds.slice(0,3));
+
+    })
+}
+
+module.exports = {
+    getPosts
+}
