@@ -16,4 +16,9 @@ server.get("/rss/vrchat/dev-updates", (req, rep) => {
     rep.headers({"Content-Type": "application/rss+xml;charset=UTF-8"}).send(file);
 })
 
+server.get("/bot", (req, rep) => {
+    rep.headers({"Content-Type":"text/plain"});
+    rep.send(`User-Agent: VR Stoat Community Scraper/1.0.0-DEV +https://rss.kitsune.exposed/bot\nIP: ${process.env.SERVER_IP || "Not Defined"}\nContact: ${process.env.WEBMASTER_CONTACT || "Not Defined"}\nCrawl Interval: ~5 Minutes`)
+})
+
 server.listen({host: process.env.SERVER_HOST || "127.0.0.1",port: process.env.SERVER_PORT || 8080})
