@@ -3,14 +3,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fastify = require('fastify');
 const { createRssVRChatDevUpdates } = require('./api/vrchat.forum');
-const { createRssResoniteUpdates } = require('./api/valve');
+const { createRssResoniteUpdates, createRssBasisLabsUpdates } = require('./api/valve');
 const server = new fastify({
     logger:true
 });
 setInterval(() => {
     console.info("Updating Feeds")
-    createRssVRChatDevUpdates()
+    createRssVRChatDevUpdates();
     createRssResoniteUpdates();
+    createRssBasisLabsUpdates();
 }, 1000 * 60 * 5)
 
 server.get("/rss/vrchat/dev-updates", (req, rep) => {
@@ -24,6 +25,13 @@ server.get("/rss/resonite/updates", (req, rep) => {
     if(!fs.existsSync(path.join('rss','resoniteUpdates.xml')))
         createRssResoniteUpdates();
     const file = fs.readFileSync(path.join(__dirname,'rss','resoniteUpdates.xml'),{encoding: 'utf-8'});
+    rep.headers({"Content-Type":"application/rss+xml;charset=UTF-8"});
+    rep.send(file);
+})
+server.get("/rss/basislabs/updates", (req, rep) => {
+    if(!fs.existsSync(path.join('rss','basisLabsUpdates.xml')))
+        createRssBasisLabsUpdates();
+    const file = fs.readFileSync(path.join(__dirname,'rss','basisLabsUpdates.xml'), {encoding: 'utf-8'});
     rep.headers({"Content-Type":"application/rss+xml;charset=UTF-8"});
     rep.send(file);
 })

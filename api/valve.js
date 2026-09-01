@@ -13,8 +13,8 @@ const client = axios.create({
 })
 
 
-function getPosts() {
-    return client.get('/?appid=2519830&count=4&maxlength=300&format=json').then(function (response) {
+function getPosts(appId) {
+    return client.get(`/?appid=${appId}&count=4&maxlength=300&format=json`).then(function (response) {
         if(response.status != 200)
             throw new Error("There was an error getting the VRChat Dev Updates Data")
         const rawFeeds = response.data.appnews.newsitems;
@@ -42,7 +42,7 @@ async function createRssResoniteUpdates() {
         copyright: "Resonite / Steam / Valve",
         ttl: 5
     })
-    const feeds = await getPosts();
+    const feeds = await getPosts("2519830");
     let changed = false;
     for(const itemSource of await feeds) {
         await feed.item({
@@ -57,7 +57,31 @@ async function createRssResoniteUpdates() {
     fs.writeFileSync(path.join(__dirname,'..','rss','resoniteUpdates.xml'), await feed.xml(), {encoding: 'utf-8', flush:true})
 }
 
-createRssResoniteUpdates();
+async function createRssBasisLabsUpdates() {
+    const parser = new XMLParser();
+    const RSS = require('rss');
+    const feed = new RSS({
+        title:"Basis Labs Updates",
+        feed_url: process.env.SERVER_DOMAIN,
+        site_url: "https://store.steampowered.com/app/3157090/Basis_Labs/",
+        copyright: "Basis Labs / Steam / Valve",
+        ttl: 5
+    });
+    const feeds = await getPosts("3157090");
+    let changed = false;
+    for(const itemSource of await feeds) {
+        await feed.item({
+            title: itemSource.title,
+            description: itemSource.excerpt,
+            date: itemSource.createdAt,
+            url: itemSource.url,
+            guid: itemSource.id,
+            author: itemSource.author
+        })
+    }
+    fs.writeFileSync(path.join(__dirname,'..','rss','basisLabsUpdates.xml'), await feed.xml(), {encoding: 'utf-8', flush: true})
+}
 module.exports = {
-    createRssResoniteUpdates
+    createRssResoniteUpdates,
+    createRssBasisLabsUpdates
 }
