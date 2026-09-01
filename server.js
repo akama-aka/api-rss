@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fastify = require('fastify');
 const { createRssVRChatDevUpdates } = require('./api/vrchat.forum');
-const { createRssResoniteUpdates, createRssBasisLabsUpdates } = require('./api/valve');
+const { createRssResoniteUpdates, createRssBasisLabsUpdates, createRssBeatSaberUpdates } = require('./api/valve');
 const server = new fastify({
     logger:true
 });
@@ -37,7 +37,7 @@ server.get("/rss/basislabs/updates", (req, rep) => {
 })
 server.get("/rss/beatsaber/updates", (req, rep) => {
     if(!fs.existsSync(path.join('rss','beatSaberUpdates.xml')))
-        createRssBasisLabsUpdates();
+        createRssBeatSaberUpdates();
     const file = fs.readFileSync(path.join(__dirname,'rss','beatSaberUpdates.xml'), {encoding: 'utf-8'});
     rep.headers({"Content-Type":"application/rss+xml;charset=UTF-8"});
     rep.send(file);
