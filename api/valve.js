@@ -20,8 +20,9 @@ function getPosts(appId) {
         const rawFeeds = response.data.appnews.newsitems;
         let feeds = [];
         rawFeeds.forEach((feed) => {
+            let t = new Date(feed.date).toISOString;
             const title = feed.title;
-            const createdAt = feed.date;
+            const createdAt = t;
             const excerpt = feed.contents;
             const id = feed.gid;
             const url = feed.url;
