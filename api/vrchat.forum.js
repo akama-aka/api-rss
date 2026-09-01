@@ -47,19 +47,13 @@ async function createRssVRChatDevUpdates() {
     const feeds = await getPosts();
     let changed = false;
     for(const itemSource of feeds) {
-        if(currentFeed.rss.channel.item.includes(itemSource.id)) {
-            changed = true;
-            console.log(`Adding new Item ${itemSource.id}`)
-            feed.item({
-                title: itemSource.title,
-                description: itemSource.excerpt,
-                date: itemSource.createdAt,
-                url: itemSource.url,
-                guid: itemSource.id
-            })
-        } else {
-            console.log(`Skipping existing Item ${itemSource.id}`)
-        }
+        feed.item({
+            title: itemSource.title,
+            description: itemSource.excerpt,
+            date: itemSource.createdAt,
+            url: itemSource.url,
+            guid: itemSource.id
+        })
     }
     fs.writeFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), feed.xml(), {encoding: 'utf-8'})
     //console.log(feeds);
