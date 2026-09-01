@@ -81,7 +81,33 @@ async function createRssBasisLabsUpdates() {
     }
     fs.writeFileSync(path.join(__dirname,'..','rss','basisLabsUpdates.xml'), await feed.xml(), {encoding: 'utf-8', flush: true})
 }
+
+async function createRssBeatSaberUpdates() {
+    const parser = new XMLParser();
+    const RSS = require('rss');
+    const feed = new RSS({
+        title: "BeatSaber Updates",
+        feed_url: process.env.SERVER_DOMAIN,
+        site_url: "https://store.steampowered.com/app/620980/Beat_Saber/",
+        copyright: "BeatSaber / Steam / Valve",
+        ttl: 5
+    });
+    const feeds = await getPosts("620980");
+    let changed = false;
+    for(const itemSource of await feeds) {
+        await feed.item({
+            title: itemSource.title,
+            description: itemSource.excerpt,
+            date: itemSource.createdAt,
+            url: itemSource.url,
+            guid: itemSource.id,
+            author: itemSource.author
+        })
+    }
+    fs.writeFileSync(path.join(__dirname,'..','rss','beatSaberUpdates.xml'), await feed.xml(), {encoding: 'utf-8', flush: true})
+}
 module.exports = {
     createRssResoniteUpdates,
-    createRssBasisLabsUpdates
+    createRssBasisLabsUpdates,
+    createRssBeatSaberUpdates
 }
