@@ -15,6 +15,8 @@ const client = axios.create({
 
 function getPosts() {
     return client.get('/official/dev-updates/32/l/latest.json?filter=default').then(function (response) {
+        if(response.status != 200)
+            throw new Error("There was an error getting the VRChat Dev Updates Data")
         const rawFeeds = response.data.topic_list.topics;
         let feeds = [];
         rawFeeds.forEach((feed) => {
@@ -42,13 +44,12 @@ async function createRssVRChatDevUpdates() {
         copyright: "VRChat",
         ttl: 5
     })
-    const currentFeed = parser.parse(fs.readFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), {encoding: 'utf-8'}));
     const feeds = await getPosts();
     let changed = false;
-    for(const itemSource of feeds) {
+    for(const itemSource of await feeds) {
         if(itemSource.title === "About the Dev Updates category")
-            break;
-        feed.item({
+            continue;
+        await feed.item({
             title: itemSource.title,
             description: itemSource.excerpt,
             date: itemSource.createdAt,
@@ -56,7 +57,7 @@ async function createRssVRChatDevUpdates() {
             guid: itemSource.id
         })
     }
-    fs.writeFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), feed.xml(), {encoding: 'utf-8'})
+    fs.writeFileSync(path.join(__dirname,'..','rss','vrchatDevUpdates.xml'), await feed.xml(), {encoding: 'utf-8', flush:true})
 }
 
 /**
