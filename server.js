@@ -3,19 +3,30 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fastify = require('fastify');
 const { createRssVRChatDevUpdates } = require('./api/vrchat.forum');
+const { createRssResoniteUpdates } = require('./api/valve');
 const server = new fastify({
     logger:true
 });
 setInterval(() => {
     console.info("Updating Feeds")
     createRssVRChatDevUpdates()
+    createRssResoniteUpdates();
 }, 1000 * 60 * 5)
 
 server.get("/rss/vrchat/dev-updates", (req, rep) => {
+    if(!fs.existsSync(path.join('rss','vrchatDevUpdates.xml')))
+        createRssVRChatDevUpdates();
     const file = fs.readFileSync(path.join(__dirname,'rss','vrchatDevUpdates.xml'), {encoding: 'utf-8'});
-    rep.headers({"Content-Type": "application/rss+xml;charset=UTF-8"}).send(file);
+    rep.headers({"Content-Type": "application/rss+xml;charset=UTF-8"});
+    rep.send(file);
 })
-
+server.get("/rss/resonite/updates", (req, rep) => {
+    if(!fs.existsSync(path.join('rss','resoniteUpdates.xml')))
+        createRssResoniteUpdates();
+    const file = fs.readFileSync(path.join(__dirname,'rss','resoniteUpdates.xml'),{encoding: 'utf-8'});
+    rep.headers({"Content-Type":"application/rss+xml;charset=UTF-8"});
+    rep.send(file);
+})
 server.get("/bot", (req, rep) => {
     rep.headers({"Content-Type":"text/plain"});
     rep.send(`User-Agent: VR Stoat Community Scraper/1.0.0-DEV +https://rss.kitsune.exposed/bot\nIP: ${process.env.SERVER_IP || "Not Defined"}\nContact: ${process.env.WEBMASTER_CONTACT || "Not Defined"}\nCrawl Interval: ~5 Minutes`)
