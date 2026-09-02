@@ -7,8 +7,8 @@ const { XMLParser } = require('fast-xml-parser');
 const client = axios.create({
     baseURL: 'https://api.steampowered.com/ISteamNews/GetNewsForApp/v0002',
     headers: {
-        "User-Agent":"VR Stoat Community Scraper/1.0.0-DEV +https://rss.kitsune.exposed/bot",
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*\/*;q=0.8'
+        "User-Agent":process.env.USER_AGENT,
+        'Accept': 'application/json'
     }
 })
 
