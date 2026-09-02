@@ -7,7 +7,7 @@ class buildJsonRss {
     }
     #items = [];
     /**
-     * 
+     * @description Add a new feed into the list
      * @param {string} id - id is unique for that item for that feed over time.
      * @param {string} url - url is the URL of the resource described by the item.
      * @param {string} title - title is plain text. Microblog items in particular may omit titles.
@@ -17,7 +17,7 @@ class buildJsonRss {
      * @param {string} published - published specifies the date in RFC 3339 format.
      * @param {Array} authors - authors has the same structure as the top-level authors.
      */
-    item(id,url,title,text = null,summary,banner = null,published,authors = []) {
+    item(id,url,title,text = undefined,summary,banner = undefined,published,authors = []) {
         const data = {
             id,
             content_text: text,
@@ -28,7 +28,9 @@ class buildJsonRss {
         }
         this.#items.push(data);
     }
-
+    /**
+     * @description Get the full feed
+     */
     get feed() {
         return {
             version: this.version,
@@ -39,7 +41,4 @@ class buildJsonRss {
     }
 }
 
-const test = new buildJsonRss("Test","This is a test Feed");
-test.item("1","https://google.com","Feed 1","This is a very long text","This is a short text","https://google.com/image","1234567",["Austin"])
-test.item("2","https://google.com","Feed 2","This is a very long text","This is a short text","https://google.com/image","1234567")
-console.log(test.feed);
+module.exports = {buildJsonRss};
