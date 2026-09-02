@@ -12,7 +12,7 @@ setInterval(() => {
     createRssVRChatDevUpdates();
     createRssResoniteUpdates();
     createRssBasisLabsUpdates();
-}, 1000 * 60 * 5)
+}, 1000 * 60 * parseInt(process.env.GLOBAL_REFRESH))
 
 server.get("/rss/vrchat/dev-updates", (req, rep) => {
     if(!fs.existsSync(path.join('rss','vrchatDevUpdates.xml')))

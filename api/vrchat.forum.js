@@ -8,7 +8,7 @@ const client = axios.create({
     baseURL: 'https://ask.vrchat.com/c',
     headers: {
         "User-Agent":process.env.USER_AGENT,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*\/*;q=0.8'
+        'Accept': 'application/json'
     }
 })
 
@@ -42,7 +42,7 @@ async function createRssVRChatDevUpdates() {
         feed_url: process.env.SERVER_DOMAIN,
         site_url: "https://ask.vrchat.com/c/official/dev-updates/",
         copyright: "VRChat",
-        ttl: 5
+        ttl: process.env.GLOBAL_TTL
     })
     const feeds = await getPosts();
     let changed = false;

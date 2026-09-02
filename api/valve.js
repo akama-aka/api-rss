@@ -41,7 +41,7 @@ async function createRssResoniteUpdates() {
         feed_url: process.env.SERVER_DOMAIN,
         site_url: "https://store.steampowered.com/app/2519830/Resonite/",
         copyright: "Resonite / Steam / Valve",
-        ttl: 5
+        ttl: process.env.GLOBAL_TTL
     })
     const feeds = await getPosts("2519830");
     let changed = false;
@@ -66,7 +66,7 @@ async function createRssBasisLabsUpdates() {
         feed_url: process.env.SERVER_DOMAIN,
         site_url: "https://store.steampowered.com/app/3157090/Basis_Labs/",
         copyright: "Basis Labs / Steam / Valve",
-        ttl: 5
+        ttl: process.env.GLOBAL_TTL
     });
     const feeds = await getPosts("3157090");
     let changed = false;
@@ -91,7 +91,7 @@ async function createRssBeatSaberUpdates() {
         feed_url: process.env.SERVER_DOMAIN,
         site_url: "https://store.steampowered.com/app/620980/Beat_Saber/",
         copyright: "BeatSaber / Steam / Valve",
-        ttl: 5
+        ttl: process.env.GLOBAL_TTL
     });
     const feeds = await getPosts("620980");
     let changed = false;
