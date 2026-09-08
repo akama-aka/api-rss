@@ -1,0 +1,26 @@
+(C) by Kasumi (https://github.com/akama-aka) - All rights reserved (By Default)
+
+Forbidden:
+* Republication
+* Usage inside AI Models
+* Training of AI Models
+* Redistribution
+* Commercial Usage
+
+Allowed:
+* Forking in manner to Contribute to this Project in the next 3 Months
+* Personal Usage
+* Execution of this Project
+* Private Modification of this Project
+
+
+
+In case of violation:
+
+In case of violation of this License Agreement you violate against my Copyright and a DMCA or Copyright claim via a Lawyer can be made.
+It can also be a License Agreement / Copyright violation even though you provide a Opt-Out feature due to the reason the damage was 
+already done. This can also result in a higher penalty due to the reason the violation was made knowingly and with taking the risk.
+
+
+/!\ INFO /!\
+I do not hesitate contacting Domain registers with a take down request when the Source Code is not taken down inside the removal window.
